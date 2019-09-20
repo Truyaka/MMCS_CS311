@@ -87,13 +87,25 @@ namespace Lexer
                 NextCh();
             }
 
-
             if (currentCharValue != -1)
             {
                 Error();
             }
+			int curMult = 1;
+			for (int i = inputString.Length - 1; i > -1; i--)
+			{
+				if (i == 0 && inputString[i] == '+') break;
+				if (i == 0 && inputString[i] == '-')
+				{
+					parseResult *= -1;
+					break;
+				}
 
-            return true;
+				parseResult += curMult * (int)(inputString[i] - '0');
+				curMult *= 10;
+			}
+
+			return true;
 
         }
     }
@@ -114,11 +126,31 @@ namespace Lexer
         }
 
         public override bool Parse()
-        { 
-            throw new NotImplementedException();
-        }
-       
-    }
+        {
+			NextCh();
+			if (!(currentCh == '_' || currentCh >= 'a' || currentCh <= 'z'
+				|| currentCh >= 'A' || currentCh >= 'Z') || currentCharValue == -1)
+			{
+				Error();
+			}
+
+			while (char.IsLetterOrDigit(currentCh) || currentCh == '_')
+			{
+				builder.Append(currentCh);
+				NextCh();
+			}
+
+			if (currentCharValue != -1)
+			{
+				Error();
+			}
+
+			parseResult = builder.ToString();
+			return true;
+
+		}
+
+	}
 
     public class IntNoZeroLexer : IntLexer
     {
