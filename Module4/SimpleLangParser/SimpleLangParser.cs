@@ -27,12 +27,49 @@ namespace SimpleLangParser
             Block();
         }
 
+		public void For()
+		{
+			if (l.LexKind != Tok.FOR)
+			{
+				SyntaxError("FOR is absent");
+			}
+			l.NextLexem();
+			Assign();
+			if (l.LexKind != Tok.TO)
+			{
+				SyntaxError("TO is absent");
+			}
+			l.NextLexem();
+			Expr();
+			if (l.LexKind != Tok.DO)
+			{
+				SyntaxError("DO is absent");
+			}
+			l.NextLexem();
+			if (l.LexKind == Tok.BEGIN)
+			{
+				Block();
+			}
+			else {
+				Statement();
+			}
+		}
+
         public void Expr() 
         {
             if (l.LexKind == Tok.ID || l.LexKind == Tok.INUM)
             {
                 l.NextLexem();
-            }
+
+				if (l.LexKind == Tok.PLUS) {
+					l.NextLexem();
+					Expr();
+				} else if (l.LexKind == Tok.MINUS)
+					{
+						l.NextLexem();
+						Expr();
+					}
+			}
             else
             {
                 SyntaxError("expression expected");
@@ -75,13 +112,18 @@ namespace SimpleLangParser
                     {
                         Cycle(); 
                         break;
-                    }
-                case Tok.ID:
-                    {
-                        Assign();
-                        break;
-                    }
-                default:
+					}
+				case Tok.ID:
+					{
+						Assign();
+						break;
+					}
+				case Tok.FOR:
+					{
+						For();
+						break;
+					}
+				default:
                     {
                         SyntaxError("Operator expected");
                         break;
