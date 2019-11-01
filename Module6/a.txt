@@ -2,6 +2,10 @@ begin
   b := 2;
   a := 3;
   a := b;
+
+  a := 0;
+  while 3 do a:=2; a:=5*5 end;
+
   cycle 3
   begin
     a := c;

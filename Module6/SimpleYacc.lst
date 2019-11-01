@@ -1,6 +1,17 @@
+
+// ==========================================================================
+//  GPPG error listing for yacc source file <SimpleYacc.y - 01.11.2019 21:21:43>
+// ==========================================================================
+//  Version:  1.5.0
+//  Machine:  MIL8A-202A-07
+//  DateTime: 01.11.2019 21:21:45
+//  UserName: user
+// ==========================================================================
+
+
 %{
-// Эти объявления добавляются в класс GPPGParser, представляющий собой парсер, генерируемый системой gppg
-    public BlockNode root; // Корневой узел синтаксического дерева 
+// ГќГІГЁ Г®ГЎГєГїГўГ«ГҐГ­ГЁГї Г¤Г®ГЎГ ГўГ«ГїГѕГІГ±Гї Гў ГЄГ«Г Г±Г± GPPGParser, ГЇГ°ГҐГ¤Г±ГІГ ГўГ«ГїГѕГ№ГЁГ© Г±Г®ГЎГ®Г© ГЇГ Г°Г±ГҐГ°, ГЈГҐГ­ГҐГ°ГЁГ°ГіГҐГ¬Г»Г© Г±ГЁГ±ГІГҐГ¬Г®Г© gppg
+    public BlockNode root; // ГЉГ®Г°Г­ГҐГўГ®Г© ГіГ§ГҐГ« Г±ГЁГ­ГІГ ГЄГ±ГЁГ·ГҐГ±ГЄГ®ГЈГ® Г¤ГҐГ°ГҐГўГ  
     public Parser(AbstractScanner<ValueType, LexLocation> scanner) : base(scanner) { }
 %}
 
@@ -30,6 +41,12 @@
 %type <blVal> stlist block
 
 %%
+// Error: NonTerminal symbol "repeat" has no productions
+// Warning: Terminating repeat fixes the following size-1 NonTerminal set
+   // {repeat}
+// Error: There are 1 non-terminating NonTerminal Symbols
+   //  {repeat}
+// ----------------------------------------------------------------------
 
 progr   : block { root = $1; }
 		;
@@ -37,6 +54,7 @@ progr   : block { root = $1; }
 statement: assign { $$ = $1; }
 		| block   { $$ = $1; }
 		| cycle   { $$ = $1; }
+		| repeat  { $$ = $1; }
 		| while   { $$ = $1; }
 	;
 
@@ -52,10 +70,15 @@ stlist	: statement
 			}
 		;
 
+statement: assign { $$ = $1; }
+		| block   { $$ = $1; }
+		| cycle   { $$ = $1; }
+	;
 
-while	: WHILE expr DO stlist END
+
+while	: WHILE expr DO stlist
 			{
-				$$ = new WhileNode($4 as BlockNode, $2 as ExprNode);
+				$$ = new RepeatNode($4 as BlockNode, $2 as ExprNode);
 			}
 		;
 
@@ -90,5 +113,8 @@ e3		: ident { $$ = $1 as IdNode; }
 
 cycle	: CYCLE expr statement { $$ = new CycleNode($2, $3); }
 		;
+	
 
 %%
+// ==========================================================================
+

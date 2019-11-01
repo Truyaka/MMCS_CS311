@@ -3,8 +3,10 @@
 namespace ProgramTree
 {
     public enum AssignType { Assign, AssignPlus, AssignMinus, AssignMult, AssignDivide };
+	public enum OperationType { PLUS, MINUS, MULT, DELIM };
 
-    public class Node // базовый класс для всех узлов    
+
+	public class Node // базовый класс для всех узлов    
     {
     }
 
@@ -12,7 +14,20 @@ namespace ProgramTree
     {
     }
 
-    public class IdNode : ExprNode
+	public class BinaryOperation : ExprNode
+	{
+		public ExprNode Left;
+		public ExprNode Right;
+		public OperationType OperationType;
+		public BinaryOperation(ExprNode left, ExprNode right, OperationType operationType)
+		{
+			Left = left;
+			Right = right;
+			OperationType = operationType;
+		}
+	}
+
+	public class IdNode : ExprNode
     {
         public string Name { get; set; }
         public IdNode(string name) { Name = name; }
@@ -24,7 +39,13 @@ namespace ProgramTree
         public IntNumNode(int num) { Num = num; }
     }
 
-    public class StatementNode : Node // базовый класс для всех операторов
+	public class DoubleNumNode : ExprNode
+	{
+		public double Num { get; set; }
+		public DoubleNumNode(double num) { Num = num; }
+	}
+	
+	public class StatementNode : Node // базовый класс для всех операторов
     {
     }
 
@@ -40,8 +61,17 @@ namespace ProgramTree
             AssOp = assop;
         }
     }
-
-    public class CycleNode : StatementNode
+	public class WhileNode : StatementNode
+	{
+		public BlockNode Statements { get; set; }
+		public ExprNode Expr { get; set; }
+		public WhileNode(BlockNode statements, ExprNode expr)
+		{
+			Statements = statements;
+			Expr = expr;
+		}
+	}
+	public class CycleNode : StatementNode
     {
         public ExprNode Expr { get; set; }
         public StatementNode Stat { get; set; }
