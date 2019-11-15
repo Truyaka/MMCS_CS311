@@ -44,7 +44,10 @@ namespace SimpleLang.Visitors
                 case '/':
                     genc.Emit(OpCodes.Div);
                     break;
-            }
+				case '%':
+					genc.Emit(OpCodes.Rem);
+					break;
+			}
         }
         public override void VisitAssignNode(AssignNode a) 
         {
@@ -76,8 +79,36 @@ namespace SimpleLang.Visitors
             genc.Emit(OpCodes.Br, startLoop);
 
             genc.MarkLabel(endLoop);
-        }
-        public override void VisitBlockNode(BlockNode bl) 
+		}
+		public override void VisitWhileNode(WhileNode c)
+		{
+			c.Assign.Visit(this);
+			c.Expr.Visit(this);
+			var limit = genc.DeclareLocal(typeof(int)); // переменная цикла cycle
+			genc.Emit(OpCodes.Stloc, limit);
+			Label startLoop = genc.DefineLabel();
+			Label endLoop = genc.DefineLabel();
+
+			genc.MarkLabel(startLoop);
+
+			genc.Emit(OpCodes.Ldloc, vars[c.Assign.Id.Name]);
+			genc.Emit(OpCodes.Ldloc, limit);
+			genc.Emit(OpCodes.Bge, endLoop);
+
+			c.Stat.Visit(this);
+
+			genc.Emit(OpCodes.Ldloc, vars[c.Assign.Id.Name]);
+			genc.Emit(OpCodes.Ldc_I4_1);
+			genc.Emit(OpCodes.Add);
+			genc.Emit(OpCodes.Stloc, vars[c.Assign.Id.Name]);
+
+			genc.Emit(OpCodes.Br, startLoop);
+
+			genc.MarkLabel(endLoop);
+
+		}
+
+		public override void VisitBlockNode(BlockNode bl) 
         {
             foreach (var st in bl.StList)
                 st.Visit(this);

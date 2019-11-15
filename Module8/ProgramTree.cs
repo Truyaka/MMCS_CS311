@@ -86,8 +86,24 @@ namespace ProgramTree
             v.VisitCycleNode(this);
         }
     }
+	public class WhileNode : StatementNode
+	{
+		public AssignNode Assign { get; set; }
+		public ExprNode Expr { get; set; }
+		public StatementNode Stat { get; set; }
+		public WhileNode(AssignNode assign, ExprNode expr, StatementNode stat)
+		{
+			Assign = assign;
+			Expr = expr;
+			Stat = stat;
+		}
+		public override void Visit(Visitor v)
+		{
+			v.VisitWhileNode(this);
+		}
+	}
 
-    public class BlockNode : StatementNode
+	public class BlockNode : StatementNode
     {
         public List<StatementNode> StList = new List<StatementNode>();
         public BlockNode(StatementNode stat)

@@ -102,6 +102,15 @@ namespace SimpleLang.Visitors
                 cond.ifFalse.Visit(this);
                 IndentMinus();
             }
-        }
-    }
+		}
+		public override void VisitWhileNode(WhileNode c)
+		{
+			Text += IndentStr() + "while ";
+			c.Assign.Visit(this);
+			Text += IndentStr() + " ne ";
+			c.Expr.Visit(this);
+			Text += Environment.NewLine;
+			c.Stat.Visit(this);
+		}
+	}
 }

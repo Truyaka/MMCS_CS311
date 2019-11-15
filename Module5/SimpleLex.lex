@@ -77,8 +77,8 @@ class ScannerHelper
 	keywords.Add("if",(int)Tokens.IF);
 	keywords.Add("then",(int)Tokens.THEN);
 	keywords.Add("else",(int)Tokens.ELSE);
-	keywords.Add("for",(int)Tokens.FOR);
-	keywords.Add("to",(int)Tokens.TO);
+	keywords.Add("while",(int)Tokens.WHILE);
+	keywords.Add("ne",(int)Tokens.NE);
 	keywords.Add("write",(int)Tokens.WRITE);
 	keywords.Add("var",(int)Tokens.VAR);
   }
